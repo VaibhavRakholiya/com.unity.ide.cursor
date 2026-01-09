@@ -34,7 +34,7 @@ namespace Microsoft.Unity.VisualStudio.Editor
 			return new ProcessStartInfo
 			{
 				UseShellExecute = shell,
-				CreateNoWindow = true, 
+				CreateNoWindow = true,
 				RedirectStandardOutput = redirect,
 				RedirectStandardError = redirect,
 				FileName = filename,
@@ -73,7 +73,7 @@ namespace Microsoft.Unity.VisualStudio.Editor
 
 				var outputSource = new TaskCompletionSource<bool>();
 				var errorSource = new TaskCompletionSource<bool>();
-				
+
 				process.OutputDataReceived += (_, e) =>
 				{
 					Append(sbOutput, e.Data, outputSource);
@@ -85,12 +85,12 @@ namespace Microsoft.Unity.VisualStudio.Editor
 				process.Start();
 				process.BeginOutputReadLine();
 				process.BeginErrorReadLine();
-				
+
 				var run = Task.Run(() => process.WaitForExit(timeoutms));
 				var processTask = Task.WhenAll(run, outputSource.Task, errorSource.Task);
 
 				if (Task.WhenAny(Task.Delay(timeoutms), processTask).Result == processTask && run.Result)
-					return new ProcessRunnerResult {Success = true, Error = sbError.ToString(), Output = sbOutput.ToString()};
+					return new ProcessRunnerResult { Success = true, Error = sbError.ToString(), Output = sbOutput.ToString() };
 
 				try
 				{
@@ -100,8 +100,8 @@ namespace Microsoft.Unity.VisualStudio.Editor
 				{
 					/* ignore */
 				}
-				
-				return new ProcessRunnerResult {Success = false, Error = sbError.ToString(), Output = sbOutput.ToString()};
+
+				return new ProcessRunnerResult { Success = false, Error = sbError.ToString(), Output = sbOutput.ToString() };
 			}
 		}
 
@@ -125,19 +125,19 @@ namespace Microsoft.Unity.VisualStudio.Editor
 			{
 				var workspaces = new List<string>();
 				var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-				string cursorStoragePath;
+				string antigravityStoragePath;
 
 #if UNITY_EDITOR_OSX
-				cursorStoragePath = Path.Combine(userProfile, "Library", "Application Support", "cursor", "User", "workspaceStorage");
+				antigravityStoragePath = Path.Combine(userProfile, "Library", "Application Support", "AntiGravity", "User", "workspaceStorage");
 #elif UNITY_EDITOR_LINUX
-				cursorStoragePath = Path.Combine(userProfile, ".config", "Cursor", "User", "workspaceStorage");
+				antigravityStoragePath = Path.Combine(userProfile, ".config", "AntiGravity", "User", "workspaceStorage");
 #else
-				cursorStoragePath = Path.Combine(userProfile, "AppData", "Roaming", "cursor", "User", "workspaceStorage");
+				antigravityStoragePath = Path.Combine(userProfile, "AppData", "Roaming", "AntiGravity", "User", "workspaceStorage");
 #endif
-				
-				if (Directory.Exists(cursorStoragePath))
+
+				if (Directory.Exists(antigravityStoragePath))
 				{
-					foreach (var workspaceDir in Directory.GetDirectories(cursorStoragePath))
+					foreach (var workspaceDir in Directory.GetDirectories(antigravityStoragePath))
 					{
 						try
 						{
@@ -189,21 +189,21 @@ namespace Microsoft.Unity.VisualStudio.Editor
 						}
 						catch (Exception ex)
 						{
-							Debug.LogWarning($"[Cursor] Error reading workspace state file: {ex.Message}");
+							Debug.LogWarning($"[AntiGravity] Error reading workspace state file: {ex.Message}");
 							continue;
 						}
 					}
 				}
 				else
 				{
-					Debug.LogWarning($"[Cursor] Workspace storage directory not found: {cursorStoragePath}");
+					Debug.LogWarning($"[AntiGravity] Workspace storage directory not found: {antigravityStoragePath}");
 				}
 
 				return workspaces.Distinct().ToArray();
 			}
 			catch (Exception ex)
 			{
-				Debug.LogError($"[Cursor] Error getting workspace directory: {ex.Message}");
+				Debug.LogError($"[AntiGravity] Error getting workspace directory: {ex.Message}");
 				return null;
 			}
 		}
